@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 
 interface ParallaxSectionProps {
@@ -17,15 +17,26 @@ export default function ParallaxSection({
   direction = "up",
 }: ParallaxSectionProps) {
   const [offset, setOffset] = useState(0);
+  const elementRef = useRef<HTMLDivElement>(null);
   const { ref, inView } = useInView({
     threshold: 0,
     triggerOnce: false,
   });
 
+  // Combine refs
+  const combinedRef = (node: HTMLDivElement | null) => {
+    elementRef.current = node;
+    if (typeof ref === "function") {
+      ref(node);
+    } else if (ref) {
+      (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
-      if (ref.current) {
-        const rect = ref.current.getBoundingClientRect();
+      if (elementRef.current) {
+        const rect = elementRef.current.getBoundingClientRect();
         const scrolled = window.pageYOffset;
         const elementTop = rect.top + scrolled;
         const windowHeight = window.innerHeight;
@@ -42,11 +53,11 @@ export default function ParallaxSection({
     handleScroll(); // Initial call
     
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [speed, ref]);
+  }, [speed]);
 
   return (
     <div
-      ref={ref}
+      ref={combinedRef}
       className={className}
       style={{
         transform: `translateY(${direction === "up" ? -offset : offset}px)`,
