@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { memberships, classTypes } from "@/data/dummy";
 
-export default function Payment() {
+function PaymentForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const paymentType = searchParams.get("type") || "membership"; // "membership" or "class"
@@ -471,5 +471,19 @@ export default function Payment() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function Payment() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="text-center">
+          <div className="text-white">Loading...</div>
+        </div>
+      </div>
+    }>
+      <PaymentForm />
+    </Suspense>
   );
 }
