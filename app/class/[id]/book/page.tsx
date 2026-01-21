@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { classTypes } from "@/data/dummy";
 
-export default function BookClass() {
+function BookClassForm() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -379,5 +379,19 @@ export default function BookClass() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function BookClass() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="text-center">
+          <div className="text-white">Loading...</div>
+        </div>
+      </div>
+    }>
+      <BookClassForm />
+    </Suspense>
   );
 }

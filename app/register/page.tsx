@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { memberships } from "@/data/dummy";
 
-export default function Register() {
+function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedMembershipId = searchParams.get("membership") || "2";
@@ -768,5 +768,19 @@ export default function Register() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function Register() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="text-center">
+          <div className="text-white">Loading...</div>
+        </div>
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   );
 }
