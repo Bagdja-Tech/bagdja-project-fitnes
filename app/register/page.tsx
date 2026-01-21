@@ -11,10 +11,14 @@ export default function Register() {
   const selectedMembershipId = searchParams.get("membership") || "2";
 
   const [formData, setFormData] = useState({
+    // Account Information
+    email: "",
+    password: "",
+    confirmPassword: "",
+    
     // Personal Information
     firstName: "",
     lastName: "",
-    email: "",
     phone: "",
     dateOfBirth: "",
     gender: "",
@@ -136,13 +140,30 @@ export default function Register() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
-    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+    // Account Information
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Invalid email format";
     }
+    
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      newErrors.password = "Password must contain uppercase, lowercase, and number";
+    }
+    
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    // Personal Information
+    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
     if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of birth is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
@@ -219,6 +240,74 @@ export default function Register() {
 
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Account Information */}
+          <div className="rounded-2xl border-2 border-gray-800 bg-gradient-to-br from-gray-900 to-black p-6 sm:p-8">
+            <h2 className="mb-6 text-2xl font-black text-white">ACCOUNT INFORMATION</h2>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-bold text-gray-300">
+                  Email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`mt-2 w-full rounded-lg border-2 bg-gray-900 px-4 py-3 text-white placeholder-gray-500 focus:border-orange-500 focus:outline-none ${
+                    errors.email ? "border-red-500" : "border-gray-700"
+                  }`}
+                  placeholder="your.email@example.com"
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                )}
+                <p className="mt-1 text-xs text-gray-400">
+                  This will be your username for login
+                </p>
+              </div>
+              <div></div>
+              <div>
+                <label className="block text-sm font-bold text-gray-300">
+                  Create Password <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`mt-2 w-full rounded-lg border-2 bg-gray-900 px-4 py-3 text-white placeholder-gray-500 focus:border-orange-500 focus:outline-none ${
+                    errors.password ? "border-red-500" : "border-gray-700"
+                  }`}
+                  placeholder="Create a strong password"
+                />
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+                )}
+                <p className="mt-1 text-xs text-gray-400">
+                  Min 8 characters, include uppercase, lowercase, and number
+                </p>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-300">
+                  Confirm Password <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className={`mt-2 w-full rounded-lg border-2 bg-gray-900 px-4 py-3 text-white placeholder-gray-500 focus:border-orange-500 focus:outline-none ${
+                    errors.confirmPassword ? "border-red-500" : "border-gray-700"
+                  }`}
+                  placeholder="Confirm your password"
+                />
+                {errors.confirmPassword && (
+                  <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Personal Information */}
           <div className="rounded-2xl border-2 border-gray-800 bg-gradient-to-br from-gray-900 to-black p-6 sm:p-8">
             <h2 className="mb-6 text-2xl font-black text-white">PERSONAL INFORMATION</h2>

@@ -27,7 +27,19 @@ export default function Success() {
     // Get member data from sessionStorage
     const storedData = sessionStorage.getItem("memberData");
     if (storedData) {
-      setMemberData(JSON.parse(storedData));
+      const data = JSON.parse(storedData);
+      setMemberData(data);
+      
+      // Auto-login user after successful registration
+      if (data.email && data.password) {
+        const userData = {
+          email: data.email,
+          name: `${data.firstName} ${data.lastName}`,
+          memberId: data.memberId,
+        };
+        sessionStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("user", JSON.stringify(userData));
+      }
     } else {
       // If no member data, redirect to home
       router.push("/");
